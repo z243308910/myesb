@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.echounion.bossmanager.entity.EsbServer" table="esb_server">
+        <id name="id" >
+            <column name="id" />
+            <generator class="native" />
+        </id>
+       	<property name="createDate" column="create_date"/>
+       	<property name="creator" column="creator"/>
+       	<property name="serverIp" column="server_ip" unique="true"/>
+       	<property name="serverName" column="server_name" unique="true"/>
+    </class>
+</hibernate-mapping>

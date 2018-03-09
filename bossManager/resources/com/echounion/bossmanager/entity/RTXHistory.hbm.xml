@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.echounion.bossmanager.entity.RTXHistory" table="msg_rtx_history">
+        <id name="id" >
+            <column name="id" />
+            <generator class="native" />
+        </id>
+        <property name="softId" column="soft_id"/>
+       <property name="receiver" column="receiver"/>
+       <property name="title" column="title"/>
+       <property name="content" column="content"/>
+       <property name="phone" column="phone"/>
+       <property name="sendTime" column="send_time"/>
+       <property name="errorsNum" column="erros_num"/>
+       <property name="lastTime" column="last_time"/>
+       <property name="status" column="status"/>
+       <property name="btype" column="btype"/>
+       <property name="bcode" column="bcode"/>
+    </class>
+</hibernate-mapping>

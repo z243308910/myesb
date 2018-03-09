@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.echounion.boss.persistence.tracking.CargosmartTrackingMapper">
+  <cache flushInterval="300000"/>
+  
+  <parameterMap type="CargosmartBaseInfo" id="CargosmartBaseInfoParam">
+  	<parameter property="id" resultMap="id"/>
+  	<parameter property="vesselName" resultMap="vessel_name"/>
+  	<parameter property="voyageNumber" resultMap="voyage_number"/>
+  	<parameter property="serviceCode" resultMap="service_code"/>
+  	<parameter property="billNo" resultMap="bill_no"/>
+  	<parameter property="bookingNo" resultMap="booking_no"/>
+  	<parameter property="carrier" resultMap="carrier"/>
+  	<parameter property="numberPackage" resultMap="number_package"/>
+  	<parameter property="packageType" resultMap="package_type"/>
+  	<parameter property="blIssueDate" resultMap="bl_issuedate"/>
+  	<parameter property="addTime" resultMap="add_time"/>
+  </parameterMap>
+  
+  <resultMap type="CargosmartBaseInfo" id="CargosmartBaseInfoResult">
+  	<id property="id" column="id"/>
+  	<result property="vesselName" column="vessel_name"/>
+  	<result property="voyageNumber" column="voyage_number"/>
+  	<result property="serviceCode" column="service_code"/>
+  	<result property="billNo" column="bill_no"/>
+  	<result property="bookingNo" column="booking_no"/>
+  	<result property="carrier" column="carrier"/>
+  	<result property="numberPackage" column="number_package"/>
+  	<result property="packageType" column="package_type"/>
+  	<result property="blIssueDate" column="bl_issuedate"/>
+  	<result property="addTime" column="add_time"/>
+  	
+  	<association property="routingInfo" column="id" select="getRoutingInfoByBaseId"/>
+  	<association property="containerInfo" column="id" select="getContainerByBaseId"/>
+  	<collection property="listCargoInfo" column="id" select="getCargoInfoByBaseId"/>
+  	<collection property="listEvent" column="id" select="getEventsByBaseId"/>
+  	
+  </resultMap>
+  
+  <parameterMap type="CargosmartCargoInfo" id="CargosmartCargoInfoParam">
+  	<parameter property="id" resultMap="id"/>
+  	<parameter property="baseId" resultMap="base_id"/>
+  	<parameter property="cargoNo" resultMap="cargo_no"/>
+  	<parameter property="cargoDesc" resultMap="cargo_desc"/>
+  	<parameter property="maskNo" resultMap="mask_no"/>
+  </parameterMap>
+  
+  <resultMap type="CargosmartCargoInfo" id="CargosmartCargoInfoResult">
+  	<id property="id" column="id"/>
+  	<result property="baseId" column="base_id"/>
+  	<result property="cargoNo" column="cargo_no"/>
+  	<result property="cargoDesc" column="cargo_desc"/>
+  	<result property="maskNo" column="mask_no"/>
+  </resultMap>
+    
+    
+  <parameterMap type="CargosmartContainerInfo" id="CargosmartContainerInfoParam">
+  	<parameter property="id" resultMap="id"/>
+  	<parameter property="baseId" resultMap="base_id"/>
+  	<parameter property="containerNo" resultMap="container_no"/>
+  	<parameter property="sizeType" resultMap="size_type"/>
+  	<parameter property="sealNumber" resultMap="seal_number"/>
+  	<parameter property="sealType" resultMap="seal_type"/>
+  </parameterMap>
+  
+  <resultMap type="CargosmartContainerInfo" id="CargosmartContainerInfoResult">
+  	<id property="id" column="id"/>
+  	<result property="baseId" column="base_id"/>
+  	<result property="containerNo" column="container_no"/>
+  	<result property="sizeType" column="size_type"/>
+  	<result property="sealNumber" column="seal_number"/>
+  	<result property="sealType" column="seal_type"/>
+  </resultMap>
+  
+  <parameterMap type="CargosmartRouting" id="CargosmartRoutingParam">
+  	<parameter property="id" resultMap="id"/>
+  	<parameter property="baseId" resultMap="base_id"/>
+  	<parameter property="por" resultMap="por"/>
+  	<parameter property="pod" resultMap="pod"/>
+  	<parameter property="pol" resultMap="pol"/>
+  	<parameter property="fnd" resultMap="fnd"/>
+  </parameterMap>
+  
+  <resultMap type="CargosmartRouting" id="CargosmartRoutingResult">
+  	<id property="id" column="id"/>
+  	<result property="baseId" column="base_id"/>
+  	<result property="por" column="por"/>
+  	<result property="pod" column="pod"/>
+  	<result property="pol" column="pol"/>
+  	<result property="fnd" column="fnd"/>
+  </resultMap>
+  
+  <parameterMap type="CargosmartEvent" id="CargosmartEventParam">
+  	<parameter property="id" resultMap="id"/>
+  	<parameter property="baseId" resultMap="base_id"/>
+  	<parameter property="eventCode" resultMap="event_code"/>
+  	<parameter property="eventDesc" resultMap="event_desc"/>
+  	<parameter property="eventLocal" resultMap="event_local"/>
+  	<parameter property="eventTime" resultMap="event_time"/>
+  </parameterMap>
+  
+  <resultMap type="CargosmartEvent" id="CargosmartEventResult">
+  	<id property="id" column="id"/>
+  	<result property="baseId" column="base_id"/>
+  	<result property="eventCode" column="event_code"/>
+  	<result property="eventDesc" column="event_desc"/>
+  	<result property="eventLocal" column="event_local"/>
+  	<result property="eventTime" column="event_time"/>
+  </resultMap>
+        
+  <sql id="baseInfoColumn">id,vessel_name,voyage_number,service_code,bill_no,booking_no,carrier,number_package,package_type,bl_issuedate,add_time</sql>
+  <sql id="eventInfoColumn">id,base_id,event_code,event_desc,event_local,event_time</sql>
+  <sql id="routingInfoColumn">id,base_id,por,pod,pol,fnd</sql>
+  <sql id="containerInfoColumn">id,base_id,container_no,size_type,seal_number,seal_type</sql>
+  <sql id="cargoInfoColumn">id,base_id,cargo_no,cargo_desc,mask_no</sql>
+  
+  <insert id="addBaseInfo" parameterType="CargosmartBaseInfo" useGeneratedKeys="true" keyProperty="id">
+  	<![CDATA[
+  		INSERT INTO ct_base(vessel_name,voyage_number,service_code,bill_no,booking_no,carrier,number_package,package_type,bl_issuedate,add_time)
+  		values(#{vesselName},#{voyageNumber},#{serviceCode},#{billNo},#{bookingNo},#{carrier},#{numberPackage},#{packageType},#{blIssueDate},now());
+  	]]>
+  </insert>
+   
+  <insert id="addContainerInfo" parameterType="CargosmartContainerInfo" useGeneratedKeys="true" keyProperty="id">
+  	<![CDATA[
+  		INSERT INTO ct_container(base_id,container_no,size_type,seal_number,seal_type)
+  		values(#{baseId},#{containerNo},#{sizeType},#{sealNumber},#{sealType});
+  	]]>
+  </insert> 
+  
+  <insert id="addRoutingInfo" parameterType="CargosmartRouting" useGeneratedKeys="true" keyProperty="id">
+  	<![CDATA[
+  		INSERT INTO ct_routing(base_id,por,pod,pol,fnd)
+  		values(#{baseId},#{por},#{pod},#{pol},#{fnd});
+  	]]>
+  </insert>
+    
+  <insert id="addEvents" parameterType="java.util.List" useGeneratedKeys="true" >
+		INSERT INTO ct_event(base_id,event_code,event_desc,event_local,event_time) values
+  		<foreach collection="list" item="item" index="index"  separator=",">  
+  			(#{item.baseId},#{item.eventCode},#{item.eventDesc},#{item.eventLocal},#{item.eventTime})
+  		</foreach>
+  </insert>
+
+  <insert id="addCargoInfo" parameterType="java.util.List" useGeneratedKeys="true">
+  		INSERT INTO ct_cargo(base_id,cargo_no,cargo_desc,mask_no) values
+  		<foreach collection="list" item="item" index="index"  separator=",">
+  			(#{item.baseId},#{item.cargoNo},#{item.cargoDesc},#{item.maskNo})
+  		</foreach>
+  </insert>
+  
+  <update id="editBaseInfo" parameterType="CargosmartBaseInfo">
+  	<![CDATA[
+  		UPDATE ct_base set vessel_name=#{vesselName},voyage_number=#{voyageNumber},service_code=#{serviceCode},bill_no=#{billNo},booking_no=#{bookingNo},
+  		carrier=#{carrier},number_package=#{numberPackage},package_type=#{packageType},bl_issuedate=#{blIssueDate}
+  		where id=#{id};
+  	]]>
+  </update>
+  
+  <update id="editContainerInfo" parameterType="CargosmartContainerInfo">
+  	<![CDATA[
+  		UPDATE ct_container set base_id=#{baseId},container_no=#{containerNo},size_type=#{sizeType},seal_number=#{sealNumber},seal_type=#{sealType}
+  		where id=#{id};
+  	]]>
+  </update> 
+  
+  <update id="editRoutingInfo" parameterType="CargosmartRouting">
+  	<![CDATA[
+  		UPDATE ct_routing set base_id=#{baseId},por=#{por},pod=#{pod},pol=#{pol},fnd=#{fnd}
+  		where id=#{id};
+  	]]>
+  </update>
+
+  <delete id="delCargoInfo" parameterType="int">
+  		DELETE from ct_cargo where base_id=#{baseId};
+  </delete>
+  
+  <update id="editCargoInfo" parameterType="java.util.List">
+	<foreach collection="list" item="item" index="index"  separator=",">
+  		UPDATE ct_cargo set base_id=#{item.baseId}, cargo_no=#{item.cargoNo}, cargo_desc=#{item.cargoDesc}, mask_no=#{item.maskNo} where id=#{item.id};
+  	</foreach>
+  </update>
+    
+  <select id="getBaseInfo" resultMap="CargosmartBaseInfoResult">
+  		SELECT <include refid="baseInfoColumn"/> from ct_base where (bill_no=#{bNo} or booking_no=#{bNo}) 
+  		and id in(select c.base_id from ct_container as c where c.container_no=#{containerNo}) limit 1;
+  </select>
+  
+  <select id="getCountByNo" resultType="int">
+		select count(1) from ct_base as cb inner join ct_container as cc on cb.id=cc.base_id 
+		where cc.container_no=#{containerNo} and(cb.bill_no=#{bNo} or cb.booking_no=#{bNo});  
+  </select>
+  
+  <select id="getCargoInfoByBaseId" resultMap="CargosmartCargoInfoResult">
+  	select <include refid="cargoInfoColumn"/> from ct_cargo where base_id=#{baseId}
+  </select>
+  
+  <select id="getRoutingInfoByBaseId" resultMap="CargosmartRoutingResult">
+  	select <include refid="routingInfoColumn"/> from ct_routing where base_id=#{baseId};
+  </select>
+  
+  <select id="getContainerByBaseId" resultMap="CargosmartContainerInfoResult">
+  	select <include refid="containerInfoColumn"/> from ct_container where base_id=#{baseId};
+  </select>
+
+  <select id="getContainerByNo" resultMap="CargosmartContainerInfoResult">
+  	SELECT cc.* from ct_container as cc inner join ct_base as cb on cb.id=cc.base_id 
+  	where (cc.container_no=#{no} or cb.booking_no=#{no} or cb.bill_no=#{no});
+  </select>
+  
+  <select id="getEventsByBaseId" resultMap="CargosmartEventResult">
+  	select <include refid="eventInfoColumn"/> from ct_event where base_id=#{baseId};
+  </select>
+  
+  <select id="getBaseInfoByContainerNo" resultMap="CargosmartBaseInfoResult">
+  	select cb.id,cb.vessel_name,cb.voyage_number,cb.service_code,cb.bill_no,cb.booking_no,cb.carrier,cb.number_package,cb.package_type,cb.bl_issuedate from ct_base as cb 
+  	where cb.id=(select cc.base_id from ct_container as cc where cc.container_no=#{containerNo} order by cc.id desc limit 1) order by id desc limit 1;
+  </select>
+  
+  <select id="getBaseInfoByBillNo" resultMap="CargosmartBaseInfoResult">
+  	select <include refid="baseInfoColumn"/> from ct_base where bill_no=#{billNo} order by id desc limit 1;
+  </select>
+  
+  <select id="getBaseInfoByBookingNo" resultMap="CargosmartBaseInfoResult">
+  	select <include refid="baseInfoColumn"/> from ct_base where booking_no=#{bookingNo} order by id desc limit 1;
+  </select>
+  
+</mapper>

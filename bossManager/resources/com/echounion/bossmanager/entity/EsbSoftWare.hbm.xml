@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.echounion.bossmanager.entity.EsbSoftWare" table="esb_software">
+        <id name="id" >
+            <column name="id" />
+            <generator class="native" />
+        </id>
+        <property name="serverId" column="server_id"/>
+       	<property name="softType" column="soft_type"/>
+       	<property name="softName" column="soft_name"/>       	
+       	<property name="softCode" column="soft_code"/>
+       	<property name="softUrl" column="soft_url"/>
+       	<property name="softProtocol" column="soft_protocol"/>
+       	<property name="softPort" column="soft_port"/>
+       	<property name="authKey" column="auth_key"/>
+       	<property name="softKey" column="soft_key"/>
+       	<property name="remark" column="remark"/>
+       	<property name="creator" column="creator"/>
+       	<property name="createDate" column="create_date"/>
+       	<property name="mailChannel" column="mail_channel"/>
+       	<property name="shortMsgChannel" column="shortmsg_channel"/>
+    </class>
+</hibernate-mapping>

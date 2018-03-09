@@ -1,0 +1,44 @@
+@CHARSET "UTF-8";
+*{font-size:12px; font-family:"宋体",Verdana, Arial;}
+body 
+{ 
+scrollbar-face-color: gray; 
+scrollbar-shadow-color: white; 
+scrollbar-highlight-color: black; 
+scrollbar-3dlight-color: white; 
+scrollbar-darkshadow-color: white; 
+scrollbar-track-color: white; 
+scrollbar-arrow-color: white;
+font-size:12px; font-family:"宋体",Verdana, Arial;
+}
+
+/**********************Chrome Only begin******************************/
+::-webkit-scrollbar-track-piece{
+    background-color:white;/*滚动条的背景颜色*/
+    -webkit-border-radius:0;/*滚动条的圆角宽度*/
+}
+::-webkit-scrollbar{
+    width:15px;/*滚动条的宽度*/
+    height:8px;/*滚动条的高度*/
+}
+::-webkit-scrollbar-thumb:vertical{/*垂直滚动条的样式*/
+    background-color:#999;
+    -webkit-border-radius:4px;
+    outline:2px solid white;
+    outline-offset:-2px;
+    border: 2px solid white;
+}
+
+::-webkit-scrollbar-thumb:horizontal{/*水平滚动条的样式*/
+    width: 5px;
+    background-color: #CCCCCC;
+    -webkit-border-radius: 6px;
+}
+/**********************Chrome Only end******************************/
+a:link {color: #222; text-decoration:none;}
+a:visited {color: #222;text-decoration:none;}
+a:hover {color: #ff0000; text-decoration:none;}
+a:active {color: #222; text-decoration:none;}
+
+.tip{color:red;font-weight:bold;}
+.disable{background-color:#F5F5F5;}

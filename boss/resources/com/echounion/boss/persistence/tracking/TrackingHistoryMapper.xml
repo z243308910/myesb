@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.echounion.boss.persistence.tracking.TrackingHistoryMapper">
+  <cache flushInterval="300000"/>
+  <parameterMap type="TrackingHistory" id="TrackingHistoryParam">
+  	<parameter property="id" resultMap="id"/>
+  	<parameter property="softId" resultMap="sid"/>
+  	<parameter property="sourceCode" resultMap="source_code"/>
+  	<parameter property="url" resultMap="url"/>
+  	<parameter property="content" resultMap="content"/>
+  	<parameter property="time" resultMap="time"/>
+  	<parameter property="status" resultMap="status"/>
+  	<parameter property="type" resultMap="type"/>
+  </parameterMap>
+  
+  <resultMap type="TrackingHistory" id="TrackingHistoryResult">
+  	<id property="id" column="id"/>
+  	<result property="softId" column="sid"/>
+  	<result property="sourceCode" column="source_code"/>
+  	<result property="url" column="url"/>
+  	<result property="content" column="content"/>
+  	<result property="url" column="url"/>
+  	<result property="time" column="time"/>
+  	<result property="status" column="status"/>
+  	<result property="type" column="type"/>
+  </resultMap>
+  
+  <sql id="sysconfigcolumn">id,sid,source_Code,url,content,time,status,type</sql>
+  
+  <select id="getCountByTime" resultMap="TrackingHistoryResult">
+  	<![CDATA[
+  		select count(1) from d_tracking_history where time between ${beginTime} and ${endTime};
+  	]]>
+  </select> 
+    
+ <insert id="addTrackingHistory" parameterType="TrackingHistory">
+ 	<![CDATA[
+ 		insert into d_tracking_history(sid,source_code,url,content,time,status,type)
+ 		values(#{softId},#{sourceCode},#{url},#{content},#{time},#{status},#{type});
+ 	]]>
+ </insert>
+</mapper>

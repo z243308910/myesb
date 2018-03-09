@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.echounion.boss.persistence.esb.EsbServerMapper">
+  <cache flushInterval="300000"/>
+  <parameterMap type="EsbServer" id="EsbServerParam">
+	<parameter property="id" resultMap="id"/>
+  	<parameter property="serverName" resultMap="server_name"/>
+  	<parameter property="serverIp" resultMap="server_ip"/>
+  	<parameter property="creator" resultMap="creator"/>
+  	<parameter property="createDate" resultMap="create_date"/>  	  	
+  </parameterMap>
+  
+  <resultMap type="EsbServer" id="EsbServerResult">
+  	<id property="id" column="id"/>
+  	<result property="serverName" column="server_name"/>
+  	<result property="serverIp" column="server_ip"/>
+  	<result property="creator" column="creator"/>
+  	<result property="createDate" column="create_date"/>  	  	
+  </resultMap>
+  
+  
+  <sql id="servercolumn">id,server_name,server_ip,creator,create_date</sql>
+  
+  <select id="getServerById" resultMap="EsbServerResult">
+	  SELECT <include refid="servercolumn"/>
+  	<![CDATA[
+  	  	  from esb_server where id=#{id};
+  	]]>
+  </select>
+
+	<select id="getIp" resultType="string">
+		<![CDATA[
+			SELECT server_ip from esb_server;
+		]]>
+	</select>
+</mapper>

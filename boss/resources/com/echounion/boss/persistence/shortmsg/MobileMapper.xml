@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.echounion.boss.persistence.shortmsg.MobileMapper">
+  <cache flushInterval="300000"/>
+  <parameterMap type="MobileHistory" id="MobileHistoryParam">
+	<parameter property="id" resultMap="id"/>
+  	<parameter property="softId" resultMap="soft_id"/>
+  	<parameter property="phoneNo" resultMap="phone_no"/>
+  	<parameter property="activeTime" resultMap="active_time"/>
+  	<parameter property="status" resultMap="status"/>
+  	<parameter property="content" resultMap="content"/>
+  	<parameter property="type" resultMap="type"/>
+  	<parameter property="errorsNum" resultMap="errors_num"/>
+  	<parameter property="lastSendTime" resultMap="last_send_time"/>
+  	<parameter property="recStatus" resultMap="rec_status"/>
+  	<parameter property="btype" resultMap="btype"/>
+  	<parameter property="bcode" resultMap="bcode"/>  	
+  </parameterMap>
+  
+  <resultMap type="MobileHistory" id="MobileHistoryResult">
+  	<id property="id" column="id"/>
+  	<result property="softId" column="soft_id"/>
+  	<result property="phoneNo" column="phone_no"/>
+  	<result property="activeTime" column="active_time"/>
+  	<result property="status" column="province"/>
+  	<result property="content" column="city"/>
+  	<result property="type" column="trade"/>
+  	<result property="errorsNum" column="errors_num"/>
+  	<result property="lastSendTime" column="last_send_time"/>
+  	<result property="recStatus" column="rec_status"/>
+  	<result property="btype" column="btype"/>
+  	<result property="bcode" column="bcode"/>
+  </resultMap>
+  
+  
+  <sql id="enterprisecolumn">id,soft_id,phone_no,active_time,status,content,type,errors_num,last_send_time,rec_status,btype,bcode</sql>
+  
+  <select id="getMobileHistoryByIds" resultMap="MobileHistoryResult">
+  	select <include refid="enterprisecolumn"/>
+  	<![CDATA[
+  		from msg_mobile_history where id in
+  	]]>
+  	<foreach collection="array" open="(" close=")" separator="," index="index" item="shortMsgId">
+  		#{shortMsgId}
+  	</foreach>
+  </select>
+  
+  <select id="getMobileHistoryByParam" resultType="map">
+  	<![CDATA[
+  		SELECT phone_no,active_time,status,content from msg_mobile_history where 1=1
+  	]]>
+  	<if test="btype!=null">and btype=#{btype}</if>
+  	<if test="bcode!=null">and bcode=#{bcode}</if>
+  </select>
+  
+  <select id="getCountByTime" resultMap="MobileHistoryResult">
+  	<![CDATA[
+  		select count(1) from msg_mobile_history where active_time between ${beginTime} and ${endTime};
+  	]]>
+  </select>  
+  
+  <insert id="addMobileHistory" parameterType="MobileHistory" useGeneratedKeys="true" keyProperty="id">
+  	<![CDATA[
+  		insert into msg_mobile_history(soft_id,phone_no,active_time,status,content,type,errors_num,last_send_time,rec_status,btype,bcode)
+  		values(#{softId},#{phoneNo},#{activeTime},#{status},#{content},#{type},#{errorsNum},#{lastSendTime},#{recStatus},#{btype},#{bcode});
+  	]]>
+  </insert>
+  
+  <update id="editMobileHistoryErrorNum" parameterType="int">
+  	<![CDATA[
+	  	update msg_mobile_history set errors_num=errors_num + 1,last_send_time=now() where id=#{historyId} and status=2;
+  	]]>
+  </update>
+    
+  <update id="editMobileHistoryStatus" parameterType="map">
+  	<![CDATA[
+	  	update msg_mobile_history set status=#{status},last_send_time=now() where id=#{historyId};
+  	]]>
+  </update>
+
+  <select id="getExistMobile" resultType="int">
+  	<![CDATA[
+  		select count(1) from msg_mobile_list where mobile_number=#{phone}
+  	]]>
+  </select>
+  
+  <insert id="addRegistMobile" useGeneratedKeys="true" keyColumn="id">
+  	<![CDATA[
+  		insert into msg_mobile_list(mobile_number,confirm_time) values(#{phone},now());
+  	]]>
+  </insert>
+  
+</mapper>

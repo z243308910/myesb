@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.echounion.boss.persistence.email.EmailMapper">
+  <cache flushInterval="300000"/>
+  <parameterMap type="MailHistory" id="MailHistoryParam">
+	<parameter property="id" resultMap="id"/>
+  	<parameter property="softId" resultMap="sid"/>
+  	<parameter property="emailAddress" resultMap="email_address"/>
+  	<parameter property="tplName" resultMap="tpl_name"/>
+  	<parameter property="sendTime" resultMap="send_time"/>
+  	<parameter property="errosNum" resultMap="erros_num"/>
+  	<parameter property="lastTime" resultMap="last_time"/>
+  	<parameter property="content" resultMap="content"/>
+  	<parameter property="status" resultMap="status"/>
+  	<parameter property="btype" resultMap="btype"/>
+  	<parameter property="bcode" resultMap="bcode"/>
+  	<parameter property="reply" resultMap="reply"/>
+  	<parameter property="cc" resultMap="cc"/>
+  	<parameter property="personal" resultMap="personal"/>
+  	<parameter property="subject" resultMap="subject"/>
+  	<parameter property="split" resultMap="split"/>
+  </parameterMap>
+  
+  <resultMap type="MailHistory" id="MailHistoryResult">
+  	<id property="id" column="id"/>
+  	<result property="softId" column="sid"/>
+  	<result property="emailAddress" column="email_address"/>
+  	<result property="tplName" column="tpl_name"/>
+  	<result property="sendTime" column="send_time"/>
+  	<result property="errosNum" column="erros_num"/>
+  	<result property="lastTime" column="last_time"/>
+  	<result property="content" column="content"/>
+  	<result property="status" column="status"/>
+  	<result property="btype" column="btype"/>
+  	<result property="bcode" column="bcode"/>
+  	<result property="reply" column="reply"/>
+  	<result property="cc" column="cc"/>
+  	<result property="personal" column="personal"/>
+  	<result property="subject" column="subject"/>
+  	<result property="split" column="split"/>  	
+  </resultMap>
+  
+  
+  <sql id="emailHistorycolumn">id,sid,email_address,tpl_name,send_time,erros_num,last_time,content,status,btype,bcode,reply,cc,personal,subject,split</sql>
+  
+  
+  <select id="getMailHistoryByIds" resultMap="MailHistoryResult">
+	  select <include refid="emailHistorycolumn"/>
+  	<![CDATA[
+  		 from msg_mail_history where id in
+  	]]>
+  	<foreach collection="array" index="index" item="item" open="(" separator="," close=")">
+			#{item}
+	</foreach>
+  </select>
+  
+  <select id="getMailHistoryByParam" resultType="map">
+  	  	<![CDATA[
+  		SELECT email_address,send_time,status,content from msg_mail_history where 1=1
+  	]]>
+  	<if test="btype!=null">and btype=#{btype}</if>
+  	<if test="bcode!=null">and bcode=#{bcode}</if>
+  </select>
+  
+  <select id="getCountByTime" resultMap="MailHistoryResult">
+  	<![CDATA[
+  		select count(1) from msg_mail_history where send_time between ${beginTime} and ${endTime};
+  	]]>
+  </select>
+  
+  <insert id="addEmailHistory" parameterType="MailHistory" useGeneratedKeys="true" keyProperty="id">
+  	<![CDATA[
+  	insert into msg_mail_history (sid,email_address,tpl_name,send_time,erros_num,last_time,content,status,btype,bcode,reply,cc,personal,subject,split)
+  	values(#{softId},#{emailAddress},#{tplName},#{sendTime},#{errosNum},#{lastTime},#{content},#{status},#{btype},#{bcode},#{reply},#{cc},#{personal},#{subject},#{split})
+  	]]>
+  </insert>
+  
+  <update id="editEmailHistoryErrorNum" parameterType="int">
+  	<![CDATA[
+  		update msg_mail_history set erros_num=erros_num + 1,last_time=now() where id=#{historyId} and status=2;
+  	]]>
+  </update>
+  
+  <update id="editEmailHistoryStatus" parameterType="map">
+  	<![CDATA[
+  		update msg_mail_history set status=#{status},last_time=now() where id=#{historyId};
+  	]]>
+  </update>
+  
+  <select id="getExistMail" resultType="int">
+  	<![CDATA[
+  		select count(1) from msg_mail_list where email=#{email};
+  	]]>
+  </select>
+  
+  <insert id="addRegistMail" useGeneratedKeys="true" keyColumn="id">
+  	<![CDATA[
+  		insert into msg_mail_list(email,confirm_time) values(#{email},now());
+  	]]>
+  </insert>
+</mapper>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.echounion.boss.persistence.system.SysLogMapper">
+  <parameterMap type="SysLog" id="SysParam">
+  	<parameter property="id" resultMap="id"/>
+  	<parameter property="opDateTime" resultMap="op_datetime"/>
+  	<parameter property="modelName" resultMap="model_name"/>
+  	<parameter property="methodName" resultMap="method_name"/>
+  	<parameter property="remark" resultMap="remark"/>
+  </parameterMap>
+  
+  <resultMap type="SysLog" id="SysLogResult">
+  	<id property="id" column="id"/>
+  	<result property="title" column="title"/>
+  	<result property="opDateTime" column="op_datetime"/>
+  	<result property="modelName" column="model_name"/>
+  	<result property="methodName" column="method_name"/>
+  	<result property="remark" column="remark"/>
+  </resultMap>
+  
+  <insert id="addSysLog" parameterType="SysLog" useGeneratedKeys="true">
+  	<![CDATA[
+  		insert into sys_log(op_datetime,model_name,method_name,remark)values(#{opDateTime},#{modelName},#{methodName},#{remark})
+  	]]>
+  </insert>
+</mapper>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.echounion.boss.persistence.esb.EsbServiceDirMapper">
+  <cache flushInterval="300000"/>
+  <resultMap type="ParamsDTO" id="ParamsDTOResult">
+  	<result property="name" column="name"/>
+  	<result property="code" column="code"/>
+  	<result property="require" column="is_require"/>
+  	<result property="typeId" column="type_id"/>
+  </resultMap>
+  
+  <resultMap type="Provider" id="ProviderResult">
+  	<result property="serverId" column="serverId"/>
+  	<result property="serverIp" column="serverIp"/>
+  	<result property="softId" column="softId"/>
+  	<result property="methodId" column="methodId"/>
+  	<result property="protocolTypeId" column="protocolType"/>
+  	<result property="serviceId" column="serviceId"/>
+  	<result property="url" column="url"/>
+  	<result property="serviceUrl" column="serviceUrl"/>
+  	<result property="serviceCode" column="serviceCode"/>
+  	<result property="serviceId" column="serviceId"/>
+  	<result property="authorKey" column="key"/>
+  </resultMap>
+  
+	<select id="getServiceDirInfo" resultMap="ProviderResult" flushCache="true">
+		<![CDATA[
+		SELECT eserver.id as serverId, esoft.id as softId,eserver.server_ip as serverIp,
+			esoft.soft_protocol as protocolType, esoft.soft_key as authorKey,
+			esdir.id as serviceId,esdir.service_code as serviceCode,esdir.method_id as methodId,concat(esoft.soft_url,esdir.service_url) as url,concat('/api',esdir.service_url) as serviceUrl 
+		from esb_service_dir as esdir 
+		inner join esb_software as esoft on esdir.soft_id=esoft.id
+		inner join esb_server as eserver on esoft.server_id=eserver.id;
+		]]>
+	</select>
+	
+	<select id="getParamsByServiceId" resultMap="ParamsDTOResult">
+		<![CDATA[
+			SELECT name,code,type_id,is_require from esb_params where service_dir_id=#{serviceId}
+		]]>
+	</select>
+</mapper>

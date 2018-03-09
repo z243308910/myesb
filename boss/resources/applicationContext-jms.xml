@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xmlns:aop="http://www.springframework.org/schema/aop"
+     xmlns:tx="http://www.springframework.org/schema/tx"
+     xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+     xmlns:context="http://www.springframework.org/schema/context"
+     xsi:schemaLocation="
+     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+     http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd
+     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+
+	<!-- JMS ConnectionFactory begin-->
+	<bean id="jmsFactory" class="org.apache.activemq.pool.PooledConnectionFactory" destroy-method="stop" lazy-init="true">
+		<property name="connectionFactory">
+			<bean class="org.apache.activemq.ActiveMQConnectionFactory">
+				<property name="brokerURL" value="${activeMq.brokerURL}"/><!-- ActiveMq的自动重连-->
+				<property name="useAsyncSend" value="true"/>
+			</bean>
+		</property>
+		<property name="maximumActive" value="${activeMq.maximumActive}"/>
+	</bean>
+	<!-- JMS ConnectionFactory end-->
+	
+	<!-- Spring Jms 模版 begin-->
+	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="jmsFactory"/>
+		<property name="sessionTransacted" value="true"/>
+		<property name="deliveryMode" value="2"/><!-- 2持久化  1非持久化 -->
+		<property name="deliveryPersistent" value="true"/>
+	</bean>
+	<!-- Spring Jms 模版 end-->
+	
+	<!-- Email消息监听器 begin-->
+	<bean id="emailListenerQueueContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer" destroy-method="destroy">
+		<property name="connectionFactory" ref="jmsFactory"/>
+		<property name="destination" ref="emailDestinationMessageQueue"/>
+		<property name="messageListener" ref="emailQueueReceviver"/>
+		<property name="autoStartup" value="true"/>
+		<property name="pubSubDomain" value="false"/>
+	</bean>
+	<bean id="emailDestinationMessageQueue" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg index="0" value="boss.email.messageQueue"/><!-- 设置消息队列的名字 -->
+	</bean>
+	<bean id="emailQueueReceviver" class="com.echounion.boss.core.jms.EmailQueueConsumer"/>
+	<!-- Email消息监听器 end -->
+	
+	<!-- ShortMsg消息监听器 begin-->
+	<bean id="shortMsgListenerQueueContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer" destroy-method="destroy">
+		<property name="connectionFactory" ref="jmsFactory"/>
+		<property name="destination" ref="shortMsgDestinationMessageQueue"/>
+		<property name="messageListener" ref="shortMsgQueueReceviver"/>
+		<property name="autoStartup" value="true"/>
+		<property name="pubSubDomain" value="false"/>
+	</bean>
+	<bean id="shortMsgDestinationMessageQueue" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg index="0" value="boss.shortmsg.messageQueue"/><!-- 设置消息队列的名字 -->
+	</bean>
+	<bean id="shortMsgQueueReceviver" class="com.echounion.boss.core.jms.ShortMsgQueueConsumer"/>
+	<!-- ShortMsg消息监听器 end -->
+	
+	<!-- RTX消息监听器 begin-->
+	<bean id="rtxListenerQueueContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer" destroy-method="destroy">
+		<property name="connectionFactory" ref="jmsFactory"/>
+		<property name="destination" ref="rtxDestinationMessageQueue"/>
+		<property name="messageListener" ref="rtxQueueReceviver"/>
+		<property name="autoStartup" value="true"/>
+		<property name="pubSubDomain" value="false"/>
+	</bean>
+	<bean id="rtxDestinationMessageQueue" class="org.apache.activemq.command.ActiveMQQueue">
+		<constructor-arg index="0" value="boss.rtx.messageQueue"/><!-- 设置消息队列的名字 -->
+	</bean>
+	<bean id="rtxQueueReceviver" class="com.echounion.boss.core.jms.RtxQueueConsumer"/>
+	<!-- RTX消息监听器 end -->
+	
+</beans>

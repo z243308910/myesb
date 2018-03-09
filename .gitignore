@@ -1,0 +1,58 @@
+#特别提醒。#为注释符，如果你需要忽略的内容被注释了。去掉#即可。
+## eclipse
+.settings/
+bin/
+.project
+.classpath
+.mymetadata
+# .metadata
+# tmp/
+# *.tmp
+# *.bak
+# *.swp
+# *~.nib
+# local.properties
+# .loadpath
+# .recommenders
+# .externalToolBuilders/
+# *.launch
+# *.pydevproject
+# .cproject
+# .factorypath
+# .buildpath
+# .target
+# .tern-project
+# .texlipse
+# .springBeans
+# .recommenders/
+
+## Intellij idea
+*.iml
+*.ipr
+*.iws
+.idea/
+classes/
+.svn/
+# /src
+# !/src/main/webapp/dist
+/**/target
+
+## gradle
+.gradle/
+build/
+gradle-app.setting
+#!gradle-wrapper.jar
+.gradletasknamecache
+gradlew
+gradlew.bat
+
+
+## java
+*.class
+# 包文件
+#*.jar
+*.war
+*.ear
+# 虚拟机崩溃日志
+hs_err_pid*
+/build/

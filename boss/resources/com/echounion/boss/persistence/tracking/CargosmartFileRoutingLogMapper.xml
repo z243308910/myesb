@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.echounion.boss.persistence.tracking.CargosmartFileRoutingLogMapper">
+
+  <parameterMap type="CargosmartFileRoutingLog" id="CargosmartFileRoutingLogParam">
+  	<parameter property="id" resultMap="id"/>
+  	<parameter property="fileName" resultMap="filename"/>
+  	<parameter property="opTime" resultMap="op_time"/>
+  	<parameter property="remark" resultMap="remark"/>
+  </parameterMap>
+
+  <sql id="baseInfoColumn">id,filename,op_time,remark</sql>
+
+  <insert id="addFileRoutingLog" parameterType="CargosmartFileRoutingLog" useGeneratedKeys="true" keyProperty="id">
+  		<![CDATA[
+	  		INSERT INTO cs_file_log(filename,op_time,remark) values(#{fileName},#{opTime},#{remark});
+		]]>
+  </insert>
+  
+</mapper>

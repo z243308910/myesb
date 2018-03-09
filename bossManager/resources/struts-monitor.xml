@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="monit" namespace="/monit" extends="default">
+		<action name="syslogs" class="sysLogsAction"></action>
+		<action name="csFileLogs" class="CsFileLogAction"></action>
+		<action name="apiLogs" class="ApiLogAction">
+			<result name="apilogs_view">/WEB-INF/monitor/apilogs_view.jsp</result>
+		</action>
+		<action name="track" class="trackingAction">
+			<result name="tracktor_view">/WEB-INF/track/tracktor_view.jsp</result>
+		</action>
+		<action name="msg" class="shortMsgAction"></action>
+		<action name="mail" class="emailAction">
+			<result name="email_view">/WEB-INF/subscribe/email_view.jsp</result>
+		</action>
+		<action name="rtx" class="rtxAction" />
+		<action name="jvm" class="sySMonitorAction"/>
+    </package>
+</struts>

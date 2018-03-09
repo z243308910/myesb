@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.echounion.boss.persistence.rtx.RtxMapper">
+  <cache flushInterval="300000"/>
+  <parameterMap type="RtxHistory" id="RtxHistoryParam">
+	<parameter property="id" resultMap="id"/>
+	<parameter property="softId" resultMap="soft_id"/>
+  	<parameter property="receiver" resultMap="receiver"/>
+  	<parameter property="title" resultMap="title"/>
+  	<parameter property="content" resultMap="content"/>
+  	<parameter property="phone" resultMap="phone"/>
+  	<parameter property="sendTime" resultMap="send_time"/>
+  	<parameter property="errorsNum" resultMap="errors_num"/>
+  	<parameter property="lastTime" resultMap="last_time"/>
+  	<parameter property="status" resultMap="status"/>
+  	<parameter property="btype" resultMap="btype"/>
+  	<parameter property="bcode" resultMap="bcode"/>
+  </parameterMap>
+  
+  <resultMap type="RtxHistory" id="RtxHistoryResult">
+  	<id property="id" column="id"/>
+  	<result property="softId" column="soft_id"/>
+  	<result property="receiver" column="receiver"/>
+  	<result property="title" column="title"/>
+  	<result property="content" column="content"/>
+  	<result property="phone" column="phone"/>
+  	<result property="sendTime" column="send_time"/>
+  	<result property="errorsNum" column="errors_num"/>
+  	<result property="lastTime" column="last_time"/>
+  	<result property="status" column="status"/>
+  	<result property="btype" column="btype"/>
+  	<result property="bcode" column="bcode"/>
+  </resultMap>
+  
+  
+  <sql id="rtxcolumn">id,soft_id,receiver,title,content,phone,send_time,errors_num,last_time,status,btype,bcode</sql>
+  
+  <select id="getRtxHistory" resultMap="RtxHistoryResult">
+  	select <include refid="rtxcolumn"/>
+  	<![CDATA[
+  		from msg_rtx_history where id=#{rtxId};
+  	]]>
+  </select>
+  
+  <select id="getRtxHistoryByParam" resultType="map">
+  	<![CDATA[
+  	SELECT receiver,send_time,status,content from msg_rtx_history where 1=1
+  	]]>
+  	<if test="btype!=null">and btype=#{btype}</if>
+  	<if test="bcode!=null">and bcode=#{bcode}</if>
+  </select>
+  
+  <insert id="addRtxHistory" parameterType="RtxHistory" useGeneratedKeys="true" keyProperty="id">
+  	<![CDATA[
+  		insert into msg_rtx_history(soft_id,receiver,title,content,phone,send_time,erros_num,last_time,status,btype,bcode)
+  		values(#{softId},#{receiver},#{title},#{content},#{phone},#{sendTime},#{errorsNum},#{lastTime},#{status},#{btype},#{bcode});
+  	]]>
+  </insert>
+  
+  <update id="editRtxHistoryErrorNum" parameterType="int">
+  	<![CDATA[
+	  	update msg_rtx_history set errors_num=errors_num + 1,last_time=now() where id=#{rtxId} and status=2;
+  	]]>
+  </update>
+    
+  <update id="editRtxlHistoryStatus" parameterType="map">
+  	<![CDATA[
+	  	update msg_rtx_history set status=#{status},last_time=now() where id=#{rtxId};
+  	]]>
+  </update>
+
+</mapper>

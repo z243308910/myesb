@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xmlns:aop="http://www.springframework.org/schema/aop"
+     xmlns:tx="http://www.springframework.org/schema/tx"
+     xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+     xmlns:context="http://www.springframework.org/schema/context"
+     xsi:schemaLocation="
+     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+     http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd
+     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+
+	<!-- Freemarker配置 begin -->
+	<bean id="freemarker" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer" >
+		<property name="templateLoaderPath" value="/WEB-INF/tpl"/>
+		<property name="freemarkerSettings">
+			<props>
+				<prop key="template_update_delay">300</prop>
+				<prop key="default_encoding">UTF-8</prop>
+				<prop key="locale">zh_CN</prop>
+			</props>
+		</property>
+	</bean>
+	<!-- Freemarker配置 end -->
+	
+    <!-- sofreight 数据导出上传 begin -->
+    <bean class="com.echounion.boss.ftp.ExportTimer"/>
+    <!-- sofreight 数据导出上传 end -->
+    
+    <!-- RTX begin -->
+    <bean id="rtxServer" class="com.echounion.boss.core.rtx.RtxConfig">
+    	<constructor-arg value="http://www.cntrans.cn:9000/mc/send.do"/>
+    </bean>
+    <!-- RTX end -->
+    
+    <!-- 短信配置 begin -->
+    <bean id="shortMsgConfig" class="com.echounion.boss.core.shortmsg.ShortMsgConfig">
+    	<property name="configs">
+    		<list>
+	    		<bean id="default" class="com.echounion.boss.core.shortmsg.ShortMsgConfigDTO">
+	    			<property name="code" value="default"/>
+			    	<property name="host" value="http://sdk.entinfo.cn/webservice.asmx"/>
+			    	<property name="password" value="261454"/><!-- 签名搜航网 -->
+			    	<property name="userName" value="SDK-SKY-010-01604"/>    		
+	    		</bean>
+	    		<bean id="other" class="com.echounion.boss.core.shortmsg.ShortMsgConfigDTO">
+	    			<property name="code" value="other"/>
+			    	<property name="host" value="http://sdk.entinfo.cn/webservice.asmx"/>
+			    	<property name="password" value="875654"/><!-- 签名卡谷网 -->
+			    	<property name="userName" value="SDK-SKY-010-01607"/>    		
+	    		</bean>	    		
+    		</list>
+    	</property>
+    	
+    </bean>
+    <!-- 短信配置end -->
+
+	<!-- 系统定时器 begin -->
+	<bean id="urlRouter" class="com.echounion.boss.core.cache.UrlContainer"/>
+   	<bean id="urlContainerTask" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+   		<property name="targetObject" ref="urlRouter"/>
+   		<property name="targetMethod" value="listener"/>
+   	</bean>
+   	<bean id="urlContainerTime" class="org.springframework.scheduling.quartz.CronTriggerBean">
+   		<property name="jobDetail" ref="urlContainerTask"/>
+   		<property name="cronExpression" value="0 0/5 * ? * * *"/>
+   	</bean>
+
+	<bean id="callerRouter" class="com.echounion.boss.core.cache.CallerContainer"/>
+   	<bean id="callerContainerTask" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+   		<property name="targetObject" ref="callerRouter"/>
+   		<property name="targetMethod" value="listener"/>
+   	</bean>
+   	<bean id="callerContainerTime" class="org.springframework.scheduling.quartz.CronTriggerBean">
+   		<property name="jobDetail" ref="callerContainerTask"/>
+   		<property name="cronExpression" value="0 0/5 * ? * * *"/>
+   	</bean>  	
+   	
+	<bean id="ipRouter" class="com.echounion.boss.core.cache.IpContainer"/>
+   	<bean id="ipContainerTask" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+   		<property name="targetObject" ref="ipRouter"/>
+   		<property name="targetMethod" value="listener"/>
+   	</bean>
+   	<bean id="ipContainerTime" class="org.springframework.scheduling.quartz.CronTriggerBean">
+   		<property name="jobDetail" ref="ipContainerTask"/>
+   		<property name="cronExpression" value="0 0/5 * ? * * *"/>
+   	</bean>
+   	
+   	<bean id="EmailPush" class="com.echounion.boss.core.cache.PushMailContainer"/>
+   	<bean id="EmailContainerTask" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+   		<property name="targetObject" ref="EmailPush"/>
+   		<property name="targetMethod" value="listener"/>
+   	</bean>
+   	<bean id="EmailContainerTime" class="org.springframework.scheduling.quartz.CronTriggerBean">
+   		<property name="jobDetail" ref="EmailContainerTask"/>
+   		<property name="cronExpression" value="0 0/20 * ? * * *"/>
+   	</bean>   	
+   	
+   	   	
+   	<bean id="startQz" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" lazy-init="true">
+   		<property name="triggers">
+   			<list>
+   				<ref bean="urlContainerTime"/>
+   				<ref bean="callerContainerTime"/>
+   				<ref bean="ipContainerTime"/>
+   				<ref bean="EmailContainerTime"/>
+   				<ref bean="cargosmartCtTimer"/>
+   				<ref bean="cargosmartAckTimer"/>
+   				<ref bean="cargosmartAckCronFailurTimer"/>
+   				<ref bean="cargosmartBlTimer"/>
+   				<ref bean="cargosmartSiTimer"/>
+   			</list>
+   		</property>
+   		<property name="quartzProperties">
+   			 <props>    
+	           <prop key="org.quartz.scheduler.instanceName">Boss_Quartz</prop>  
+	           <prop key="org.quartz.threadPool.threadCount">2</prop>
+       		</props>
+   		</property>
+   	</bean>
+   	<!--  定时器 end -->
+
+	<!-- cargosmart 配置 begin -->
+	<bean id="scheduleCargosmart" class="com.echounion.boss.cargosmart.schedule.CargosmartSchedule">
+		<property name="wsdl" value="http://www.cargosmart.com/publicapp/SailingScheduleWebService?wsdl"/>
+		<property name="soapHeader">
+			<bean class="com.echounion.boss.cargosmart.schedule.CargosmartSoapHeader">
+				<property name="nameURI" value="http://www.cargosmart.com/publicapp/SailingScheduleWebService"/>
+				<property name="uuid" value="B2864679-4835-493D-BE73-5ABDAD15ED49"/>
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="cargosmartFtp" class="com.echounion.boss.core.ftp.FtpConfig">
+		<property name="charset" value="UTF-8"/>
+		<property name="url" value="testgateway.cargosmart.com"/>
+		<property name="port" value="21"/>
+		<property name="userName" value="chinatransftp"/>
+		<property name="password" value="CHIJ8a7qiDBI"/>
+		<property name="passive" value="true"/>
+	</bean>
+	<bean id="cargosmartPath" class="com.echounion.boss.cargosmart.si.CargoSmartConfig">
+		<property name="remoteAms" value="/in/ams"/>
+		<property name="remoteBr" value="/in/br"/>
+		<property name="remoteIsf" value="/in/isf"/>
+		<property name="remoteSi" value="/in/si"/>
+		
+		<property name="localAms" value="/mnt/cargosmart/ams"/>
+		<property name="localBr" value="/mnt/cargosmart/br"/>
+		<property name="localIsf" value="/mnt/cargosmart/isf"/>
+		<property name="localSi" value="C:\\test\back\si"/>
+		<property name="localCt" value="C:\\test\back\ct"/>
+		<property name="localAck" value="C:\\test\back\ack"/>
+		<property name="localBl" value="c:\\test/back\bl"/>
+		
+		<property name="monitorLocalPath">
+			<map>
+				<entry key="ack" value="C:\\test/ack"/>
+				<entry key="ct" value="C:\\test/ct"/>
+				<entry key="bl" value="C:\\test/bl"/>
+				<entry key="si" value="C:\\test/si/"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="cargosmartFtpTimerMonitor" class="com.echounion.boss.cargosmart.si.CargoSmartFtpTimer">
+		<property name="config" ref="cargosmartPath"/>
+		<property name="ftpDirMonitorService" ref="FtpDirMonitorServiceImpl"/>
+		<property name="esbService" ref="EsbServiceImpl"/>
+	</bean>
+
+   	<bean id="cargosmartSiTask" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+   		<property name="targetObject" ref="cargosmartFtpTimerMonitor"/>
+   		<property name="targetMethod" value="listenerSi"/>
+   	</bean>
+   	<bean id="cargosmartSiTimer" class="org.springframework.scheduling.quartz.CronTriggerBean">
+   		<property name="jobDetail" ref="cargosmartSiTask"/>
+   		<property name="cronExpression" value="0 0/3 * ? * * *"/>
+   	</bean>
+	
+   	<bean id="cargosmartCtTask" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+   		<property name="targetObject" ref="cargosmartFtpTimerMonitor"/>
+   		<property name="targetMethod" value="listenerCt"/>
+   	</bean>
+   	<bean id="cargosmartCtTimer" class="org.springframework.scheduling.quartz.CronTriggerBean">
+   		<property name="jobDetail" ref="cargosmartCtTask"/>
+   		<property name="cronExpression" value="0 0/10 * ? * * *"/>
+   	</bean>
+   	
+   	<bean id="cargosmartAckTask" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+   		<property name="targetObject" ref="cargosmartFtpTimerMonitor"/>
+   		<property name="targetMethod" value="listenerAck"/>
+   	</bean>
+   	<bean id="cargosmartAckTimer" class="org.springframework.scheduling.quartz.CronTriggerBean">
+   		<property name="jobDetail" ref="cargosmartAckTask"/>
+   		<property name="cronExpression" value="0 0/5 * ? * * *"/>
+   	</bean>
+
+   	<bean id="cargosmartBkTask" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+   		<property name="targetObject" ref="cargosmartFtpTimerMonitor"/>
+   		<property name="targetMethod" value="listenerBl"/>
+   	</bean>
+   	<bean id="cargosmartBlTimer" class="org.springframework.scheduling.quartz.CronTriggerBean">
+   		<property name="jobDetail" ref="cargosmartBkTask"/>
+   		<property name="cronExpression" value="0 0/5 * ? * * *"/>
+   	</bean>
+   	
+   	<bean id="cargosmartAckCronFailurTimerTask" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+   		<property name="targetObject" ref="cargosmartFtpTimerMonitor"/>
+   		<property name="targetMethod" value="listenerSiCronFailure"/>
+   	</bean>
+   	<bean id="cargosmartAckCronFailurTimer" class="org.springframework.scheduling.quartz.CronTriggerBean">
+   		<property name="jobDetail" ref="cargosmartAckCronFailurTimerTask"/>
+   		<property name="cronExpression" value="0 0/10 * ? * * *"/>
+   	</bean>
+	<!-- cargosmart 配置 end -->
+	
+	<!-- 中国船期网 begin -->
+	<bean id="scheduleSouShipping" class="com.echounion.boss.soushipping.sehedule.SouShipingSchedule">
+		<property name="wsdl" value="http://soushipping.com:8080/public/services/data?wsdl"/>
+		<property name="soapHeader">
+			<bean class="com.echounion.boss.soushipping.sehedule.SouShippingSoapHeader">
+				<property name="userName" value="souhang"/>
+				<property name="password" value="password"/>
+			</bean>
+		</property>
+	</bean>	
+	<!-- 中国船期网 end -->	
+</beans>

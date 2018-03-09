@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.echounion.boss.persistence.esb.EsbApiLogMapper">
+  <parameterMap type="EsbApiLog" id="EsbApiLogParam">
+  	<parameter property="id" resultMap="id"/>
+  	<parameter property="softId" resultMap="soft_id"/>
+  	<parameter property="serviceId" resultMap="service_id"/>
+  	<parameter property="invokeIp" resultMap="invoke_ip"/>
+  	<parameter property="invokeTime" resultMap="invoke_time"/>
+  	<parameter property="resCode" resultMap="res_code"/>
+  	<parameter property="resMsg" resultMap="res_msg"/>
+  </parameterMap>
+  
+  <resultMap type="EsbApiLog" id="EsbApiLogResult">
+  	<id property="id" column="id"/>
+  	<result property="softId" column="soft_id"/>
+  	<result property="firstServiceCode" column="first_service_code"/>
+  	<result property="secondServiceCode" column="second_service_code"/>
+  	<result property="serviceMethodCode" column="service_method_code"/>
+  	<result property="serviceId" column="service_id"/>
+  	<result property="invokeIp" column="invoke_ip"/>
+  	<result property="invokeTime" column="invoke_time"/>
+  	<result property="resCode" column="res_code"/>
+  	<result property="resMsg" column="res_msg"/>  	
+  </resultMap>
+  
+  <insert id="addEsbApiLog" parameterType="EsbApiLog" useGeneratedKeys="true">
+  	<![CDATA[
+  		insert into esb_api_log
+  		(soft_id,service_id,invoke_ip,invoke_time,res_code,res_msg) values
+  	  (#{softId},#{serviceId},#{invokeIp},#{invokeTime},#{resCode},#{resMsg});
+  	]]>
+  </insert>
+</mapper>

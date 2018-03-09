@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.echounion.bossmanager.entity.SysConfig" table="sys_config">
+        <id name="id" >
+            <column name="id" />
+            <generator class="native" />
+        </id>
+       	<property name="configCode" column="config_code" unique="true" not-null="true"/>
+       	<property name="configDesc" column="config_desc"/>       	
+       	<property name="configName" column="config_name"/>
+       	<property name="createDate" column="create_date"/>
+       	<property name="creator" column="creator"/>
+       	<property name="ip" column="ip"/>
+       	<property name="port" column="port"/>       	
+       	<property name="password" column="password"/>
+       	<property name="userName" column="username"/>
+       	<property name="url" column="url"/>
+       	<property name="type" column="type"/>
+       	<property name="channel" column="channel"></property>
+    </class>
+</hibernate-mapping>

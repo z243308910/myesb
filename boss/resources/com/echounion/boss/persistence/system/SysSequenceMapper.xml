@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.echounion.boss.persistence.system.SysSequenceMapper">
+  <cache flushInterval="300000"/>
+  <parameterMap type="SysSequence" id="SysSequenceParam">
+  	<parameter property="seqCode" resultMap="seq_code"/>
+  	<parameter property="seqDesc" resultMap="seq_desc"/>
+  	<parameter property="tableName" resultMap="table_name"/>
+  	<parameter property="fieldName" resultMap="field_name"/>
+  	<parameter property="minValue" resultMap="min_value"/>
+  	<parameter property="maxValue" resultMap="max_value"/>
+  	<parameter property="nextValue" resultMap="next_value"/>
+  	<parameter property="createTime" resultMap="create_time"/>
+  </parameterMap>
+  
+  <resultMap type="SysSequence" id="SysSequenceResult">
+  	<id property="seqCode" column="seq_code"/>
+  	<result property="seqDesc" column="seq_desc"/>
+  	<result property="tableName" column="table_name"/>
+  	<result property="fieldName" column="field_name"/>
+  	<result property="minValue" column="min_value"/>
+  	<result property="maxValue" column="max_value"/>
+  	<result property="nextValue" column="next_value"/>
+  	<result property="createTime" column="create_time"/>  	
+  </resultMap>
+  
+  <sql id="allcolumn">seq_code,seq_desc,table_name,field_name,min_value,max_value,next_value,create_time</sql>
+  
+  <select id="getSysSequence" parameterType="map" resultMap="SysSequenceResult">
+  		select <include refid="allcolumn"/> from sys_sequence
+  		<choose>
+  			<when test="code!=null">
+  				where seq_code=#{code}
+  			</when>
+  			<otherwise>
+  				where table_name=#{table_name} and field_name=#{field_name}
+  			</otherwise>
+  		</choose>
+  		limit 1;
+  </select>
+</mapper>

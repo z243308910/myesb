@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="com.echounion.bossmanager.entity.EsbServiceDir" table="esb_service_dir">
+        <id name="id" >
+            <column name="id" />
+            <generator class="native" />
+        </id>
+        <property name="softId" column="soft_id"/>
+        <property name="methodId" column="method_id"/>
+       	<property name="serviceCode" column="service_code"/>
+       	<property name="serviceName" column="service_name"/>       	
+       	<property name="serviceUrl" column="service_url"/>
+       	<property name="remark" column="remark"/>
+       	<property name="status" column="status"/>
+    </class>
+</hibernate-mapping>

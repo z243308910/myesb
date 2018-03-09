@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.echounion.boss.persistence.esb.EsbSoftWareMapper">
+  <cache flushInterval="300000"/>
+  <parameterMap type="EsbSoftWare" id="EsbSoftWareParam">
+  	<parameter property="id" resultMap="id"/>
+  	<parameter property="serverId" resultMap="server_id"/>
+  	<parameter property="softType" resultMap="soft_type"/>
+  	<parameter property="softName" resultMap="soft_name"/>
+  	<parameter property="softCode" resultMap="soft_code"/>
+  	<parameter property="softUrl" resultMap="soft_url"/>
+  	<parameter property="softProtocol" resultMap="soft_protocol"/>
+  	<parameter property="softPort" resultMap="soft_port"/>
+  	<parameter property="authKey" resultMap="auth_key"/>
+  	<parameter property="softKey" resultMap="soft_key"/>
+  	<parameter property="remark" resultMap="remark"/>
+  	<parameter property="creator" resultMap="creator"/>
+  	<parameter property="createDate" resultMap="create_date"/>
+  	<parameter property="mailChannel" resultMap="mail_channel"/>
+  </parameterMap>
+  
+  <resultMap type="EsbSoftWare" id="EsbSoftWareResult">
+  	<id property="id" column="id"/>
+  	<result property="serverId" column="server_id"/>
+  	<result property="softType" column="soft_type"/>
+  	<result property="softName" column="soft_name"/>
+  	<result property="softCode" column="soft_code"/>
+  	<result property="softUrl" column="soft_url"/>
+	<result property="softProtocol" column="soft_protocol"/>
+  	<result property="softPort" column="soft_port"/>
+  	<result property="softKey" column="soft_key"/>
+  	<result property="authKey" column="auth_key"/>
+  	<result property="remark" column="remark"/>
+  	<result property="creator" column="creator"/>
+  	<result property="createDate" column="create_date"/>
+  	<result property="mailChannel" column="mail_channel"/>
+  	<result property="shortMsgChannel" column="shortmsg_channel"/>
+  </resultMap>
+  
+  
+  <sql id="softwarecolumn">id,server_id,soft_type,soft_name,soft_code,soft_url,soft_protocol,soft_port,soft_key,auth_key,remark,creator,create_date,mail_channel</sql>
+  
+  <select id="getSoftWareById" resultMap="EsbSoftWareResult">
+	  select <include refid="softwarecolumn"/>
+  	<![CDATA[
+  	  	  from esb_software where id=#{softId};
+  	]]>
+  </select>
+
+  <select id="getCallers" resultType="Caller" flushCache="true">
+  	<![CDATA[
+  		select soft.id as softId,soft.server_id as serverId,serve.server_ip as serverIp, 
+  		soft.auth_key as authorKey,soft.mail_channel as mailChannel,soft.shortmsg_channel as shortMsgChannel from esb_software as soft 
+  		inner join esb_server as serve on serve.id=soft.server_id
+  	]]>
+  </select>	
+</mapper>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="system" namespace="/sys" extends="default">
+		<action name="config" class="sysConfigAction">
+			<result name="config_add">/WEB-INF/system/config_add.jsp</result>
+			<result name="view_config_shortmsg">/WEB-INF/system/shortmsgconfig_view.jsp</result>
+			<result name="view_config_email">/WEB-INF/system/config_view.jsp</result>
+			<result name="view_config_ftp">/WEB-INF/system/ftpconfig_view.jsp</result>
+		</action>
+		<action name="logs" class="logsAction"></action>
+		<action name="admin" class="AdminAction">
+			<result name="admin_view">/WEB-INF/system/admin_view.jsp</result>
+		</action>
+    </package>
+</struts>

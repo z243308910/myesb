@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="default" namespace="/" extends="json-default">
+    	<!-- 安全性检查 begin -->
+    	<interceptors>
+    		<interceptor name="securityCheck" class="com.echounion.bossmanager.common.security.SecurityCheck"/>
+    		<interceptor-stack name="SecurityStack">
+    			<interceptor-ref name="securityCheck"/>
+    			<interceptor-ref name="defaultStack"/>
+    		</interceptor-stack>
+    	</interceptors>
+     	<default-interceptor-ref name="SecurityStack"/> 
+    	<!-- 安全性检查 end -->
+
+		<!-- 全局配置 begin -->    	
+    	<default-action-ref name="index"/>
+    	<global-results>
+    		<result>/WEB-INF/index.jsp</result>
+    		<result name="login">/WEB-INF/login.jsp</result>
+    		<result name="dir_login" type="redirectAction">login</result>
+    		<result name="none" type="redirect">/404.jsp</result>
+    		<result name="json" type="json"><param name="root">jsonData</param></result>
+    	</global-results>
+
+    	<global-exception-mappings>
+    		<exception-mapping result="none" exception="java.lang.NoSuchMethodException"/>
+    		<exception-mapping result="login" exception="com.octo.captcha.service.CaptchaServiceException"></exception-mapping>
+    	</global-exception-mappings>
+    	
+    	<action name="dir_*" class="BaseAction">
+    		<result>/WEB-INF/{1}.jsp</result>
+    	</action>
+    	<action name="*_*_*" class="BaseAction">
+    		<result>/WEB-INF/{1}/{2}_{3}.jsp</result>
+    	</action>
+  		<action name="index" class="BaseAction"></action>
+  		<action name="login" class="AdminAction">
+  			<result type="redirectAction">index</result>
+  		</action>
+  		<action name="welcome" class="indexAction">
+  			<result name="welcome">/WEB-INF/welcome.jsp</result>
+  		</action>
+  		<!-- 全局配置 begin -->
+  		
+    </package>
+</struts>

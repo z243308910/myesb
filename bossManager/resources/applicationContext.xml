@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xmlns:aop="http://www.springframework.org/schema/aop"
+     xmlns:tx="http://www.springframework.org/schema/tx"
+     xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+     xmlns:context="http://www.springframework.org/schema/context"
+     xsi:schemaLocation="
+     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+     http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd
+     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+
+	<context:property-placeholder location="classpath:system.properties"/>
+	<!-- 数据库连接 begin -->
+	<bean id="dataSource" class="com.echounion.bossmanager.common.security.EncryptDataSource">
+			<property name="driver" value="${jdbc.driverClassName}"/>
+			<property name="driverUrl" value="${jdbc.url}"/>
+			<property name="user" value="${jdbc.username}"/>
+			<property name="password" value="${jdbc.password}"/>
+			<property name="maximumActiveTime" value="${jdbc.maxActive}"/>
+			<property name="maximumConnectionCount" value="${jdbc.maxConn}"/>
+			<property name="minimumConnectionCount" value="${jdbc.minConn}"/>
+	</bean>
+	<!-- 数据库连接 end -->
+	
+    <!-- Session工厂 beign -->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="mappingLocations" value="classpath:/com/echounion/bossmanager/entity/*.hbm.xml"/>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+				<prop key="hibernate.cache.use_query_cache">true</prop>
+				<prop key="hibernate.cache.use_second_level_cache">true</prop>
+				<prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop>
+			</props>
+		</property>
+		<property name="dataSource" ref="dataSource"/>		
+	</bean>
+	<!-- Session 工厂 end -->
+	
+	<context:component-scan base-package="com.echounion.bossmanager"/>
+	
+	 <!-- 系统事务处理 begin -->
+	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">  
+	     <property name="sessionFactory" ref="sessionFactory"/>  
+	</bean>
+   <tx:annotation-driven transaction-manager="transactionManager" />
+    <!-- 系统事务处理 end -->	
+	
+	<!-- 系统日志处理 begin -->
+	<bean id="logHandler" class="com.echounion.bossmanager.core.advice.LogAdvice"/>
+	<aop:config>
+		<aop:pointcut id="logPointcut" expression="execution(* com.echounion.bossmanager.service..*.add*(..)) or execution(* com.echounion.bossmanager.service..*.del*(..)) or execution(* com.echounion.bossmanager.service..*.edit*(..))" />
+		<aop:aspect id="logAfterReturning"  ref="logHandler" order="2">
+			<aop:after-returning pointcut-ref="logPointcut" method="addLog"/>
+		</aop:aspect>
+	</aop:config>
+
+	<bean id="logsExceptionHandler" class="com.echounion.bossmanager.core.advice.LogsExceptionHandler"/>		
+	<aop:config>
+		<aop:pointcut id="logPointcut" expression="execution(* com.echounion.bossmanager.service..*.add*(..)) or execution(* com.echounion.bossmanager.service..*.del*(..)) or execution(* com.echounion.bossmanager.service..*.edit*(..))" />
+		<aop:aspect id="logAfterThrowing"  ref="logsExceptionHandler" order="3">
+			<aop:after-throwing pointcut-ref="logPointcut" method="doAfterThrowing"/>
+		</aop:aspect>
+	</aop:config>
+	<!-- 系统日志处理 end -->	
+	
+	<!-- 日志处理的线程池 begin -->
+	<bean id="logTaskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="1"/>
+		<property name="keepAliveSeconds" value="200"/>
+		<property name="maxPoolSize" value="2"/>
+		<property name="queueCapacity" value="30"/>
+	</bean>
+	<!-- 日志处理的线程池 end -->	
+	<import resource="applicationContext-*.xml"/>
+</beans>
